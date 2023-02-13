@@ -1,0 +1,174 @@
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+
+\newcommand{\assignment}{4}
+\newcommand{\duedate}{March 1, 2023}
+\input{hw-template.tex}
+\author{
+    \textbf{YOUR NAME} \\ 
+    \textbf{YOUR GIT USERNAME} \\ 
+    \textbf{YOUR E-MAIL}
+}% INFORMATION
+
+\begin{document}
+
+\maketitle % Print the title
+
+{\huge \textbf{K-Means}} \\
+
+The~\href{https://course.ccs.neu.edu/cs6220/homework-4/data/}{normalized automobile distributor timing speed and ignition coil gaps} for production F-150 trucks over the years of 1996, 1999, 2006, 2015, and 2022. We have stripped out the labels for the five years of data.\\
+\\
+Each sample in the dataset is two-dimensional, i.e. $\textbf{x}_i \in \mathbb{R}^2$ (one dimension for timing speed and the other for coil gaps), and there are $N=5000$ instances in the data.
+\\
+
+{\Large \textbf{Question 1} [20 pts total]} \\
+
+\textbf{[10 pts] Question 1a.)} Implement a simple $k$-means algorithm in Python on Colab with the following initialization:
+
+\begin{equation}
+\textbf{x}_1 = \left( \begin{matrix} 10 \\ 10 \end{matrix} \right), \textbf{x}_2 = \left( \begin{matrix} -10 \\ -10 \end{matrix} \right),
+\textbf{x}_3 = \left( \begin{matrix} 2 \\ 2 \end{matrix} \right),
+\textbf{x}_4 = \left( \begin{matrix} 3 \\ 3 \end{matrix} \right),
+\textbf{x}_5 = \left( \begin{matrix} -3 \\ -3 \end{matrix} \right),
+\nonumber
+\end{equation} \\
+
+You need only 100 iterations, maximum, and your algorithm should run very quickly to get the results. \\
+
+\textbf{[5 pts] Question 1b.)} Scatter the results in two dimensions with different clusters as different colors. You can use \textbf{matplotlib}'s \textbf{pyplot} functionality:
+
+\begin{verbatim}
+>> import matplotlib.pyplot as plt
+>> plt.scatter(<YOUR CODE HERE>)
+\end{verbatim}
+
+\textbf{[5 pts] Question 1c.)} You will notice that in the above, there are only five initialization clusters. Why is $k=5$ a logical choice for this dataset? After plotting your resulting clusters, what do you notice? Did it cluster very well? Is there an initialization that would make it cluster well?\\
+\\
+
+{\Large \textbf{Question 2)}[30 pts total]} \\
+
+In the data from Question 1, let \textbf{x} and \textbf{y} be two instances, i.e., they are each truck with separate measurements.  A common distance metric is the \emph{Mahalanobis Distance} with a specialized matrix $P \in \mathbb{R}^{2 \times 2}$ that is written as follows: 
+
+\begin{equation}
+d(\textbf{x}, \textbf{y}) = ( \textbf{x} - \textbf{y} )^T P^{-1} ( \textbf{x} - \textbf{y} )
+\nonumber
+\end{equation} \\
+
+In scalar format (non-matrix format), the Mahalanobis Distance can be expressed as:
+
+\begin{equation}
+    d(\textbf{x}, \textbf{y}) = \sum_{i=1}^2 \sum_{j=1}^2 (x_i - y_i) \cdot P^{-1}_{i,j} \cdot (x_j - y_j)
+    \nonumber
+\end{equation}
+
+where \textbf{x} and \textbf{y} are two instances of dimensionality 2, and $d(\textbf{x}, \textbf{y})$ is the distance between them. In the case of the F150 engine components, $P$ is a known relationship through Ford's quality control analysis each year, where it is numerically shown as below: \\
+
+\begin{equation}
+ P = \left(
+\begin{matrix}
+10 & 0.5 \\
+-10 & 0.25
+\end{matrix}
+\right) \nonumber
+\end{equation}
+\\
+
+\textbf{[15 pts] Question 2a.)} Using the same data as \textbf{Question 1} and the same initialization instances $\{\textbf{x}_1, \textbf{x}_2, \textbf{x}_3, \textbf{x}_4, \textbf{x}_5 \}$ implement a specialized $k$-means with the above Mahalanobis Distance. Scatter the results with the different clusters as different colors. \\
+
+What do you notice? You may want to pre-compute $P^{-1}$ so that you aren't calculating an inverse every single loop of the the $k$-Means algorithm. \\
+\\
+\textbf{[5 pts] Question 2b.)}
+Calculate and print out the principle components of the aggregate data. \\
+\\
+\textbf{[5 pts] Question 2c.)}
+Calculate and print out the principle components of \emph{each cluster}. Are they the same as the aggregate data? Are they the same as each other?\\
+
+\textbf{[5 pts] Question 2d.)}
+Take the eigenvector / eigenvalue decomposition of $P^T$ and subsequently, take their product. That is to say, 
+
+\begin{equation}
+    \{\Lambda, \Phi\} = \verb"eig"\left( P^T \right)
+    \nonumber
+\end{equation}
+
+where $\Lambda = \left( \begin{matrix} \lambda_1 & 0 \\ 0 & \lambda_2 \end{matrix} \right)$ and $\Phi$ is a $2 \times 2$ matrix with $\phi_i \in \mathbb{R}^2$, a column in $\Phi$. Calculate a new $P'$ such that
+
+\begin{equation}
+    P' = \Lambda \Phi \nonumber
+\end{equation}
+\\
+What is the relationship between $P'$ and the data? 
+
+\vspace{10mm}
+
+{\huge \textbf{Market Basket Analysis and Algorithms}} \\
+
+Consider $F_3$ as the following set of frequent 3-itemsets:
+
+\begin{verbatim}
+{1, 2, 3}, {1, 2, 4}, {1, 2, 5}, {1, 3, 4}, 
+{2, 3, 4}, {2, 3, 5}, {3, 4, 5}.
+\end{verbatim} \\
+
+Assume that there are only five items in the data set. \\
+
+{\Large \textbf{Question 3} [25 pts total]} \\
+\\
+\textbf{[10 pts] Question 3a.)} List all candidate 4-itemsets obtained by a candidate generation procedure using the $F_{k - 1} \times F_1$ merging strategy. \\
+\\
+
+\textbf{[10 pts] Question 3b.)} List all candidate 4-itemsets obtained by the candidate generation procedure in A Priori, using $F_{k-1} \times F_{k-1}$. \\
+\\
+
+\textbf{[5 pts] Question 3c.)} List all candidate 4-itemsets that survive the candidate pruning step of
+the Apriori algorithm. \\
+
+\vspace{10mm}
+
+{\Large \textbf{Question 4} [25 pts total]} \\
+ 
+Consider the following table for questions 4a) to 4c):\\
+\begin{center}
+\begin{tabular}{ll}
+Transaction ID & Items \\
+\rowcolor[HTML]{DEEBF6} 
+\textbf{1}     & \textbf{\{Beer, Diapers\}} \\
+\rowcolor[HTML]{DEEBF6} 
+\textbf{2}     & \textbf{\{Milk, Diapers, Bread, Butter\}} \\
+\rowcolor[HTML]{DEEBF6} 
+\textbf{3}     & \textbf{\{Milk, Diapers, Cookies\}} \\
+\rowcolor[HTML]{DEEBF6} 
+\textbf{4}     & \textbf{\{Bread, Butter, Cookies\}} \\
+\rowcolor[HTML]{DEEBF6} 
+\textbf{5}     & \textbf{\{Milk, Beer, Diapers, Eggs\}} \\
+\rowcolor[HTML]{DEEBF6} 
+\textbf{6}     & \textbf{\{Beer, Cookies, Diapers\}} \\
+\rowcolor[HTML]{DEEBF6} 
+\textbf{7}     & \textbf{\{Milk, Diapers, Bread, Butter\}} \\
+\rowcolor[HTML]{DEEBF6} 
+\textbf{8}     & \textbf{\{Bread, Butter, Diapers\}} \\
+\rowcolor[HTML]{DEEBF6} 
+\textbf{9}     & \textbf{\{Bread, Butter, Milk\}} \\
+\rowcolor[HTML]{DEEBF6} 
+\textbf{10}    & \textbf{\{Beer, Butter, Cookies\}}    
+\end{tabular}
+\end{center}
+
+\vspace{8mm}
+
+\textbf{[3 pts] Question 4a.)} What is the maximum number of association rules that can be extracted from this data (including rules that have zero support)? \\
+
+\textbf{[3 pts] Question 4b.)} What is the confidence of the rule $\{ \text{Milk, Diapers} \} \Rightarrow \{ \text{Butter} \}$? \\
+
+\textbf{[3 pts] Question 4c.)} What is the support for the rule $\{ \text{Milk, Diapers} \} \Rightarrow \{ \text{Butter} \}$? \\
+
+\textbf{[3 pts] Question 4d.)} \verb"True" or \verb"False" with an explanation: Given that \{a,b,c,d\} is a frequent itemset, \{a,b\} is always a frequent itemset. \\
+
+\textbf{[3 pts] Question 4e.)} \verb"True" or \verb"False" with an explanation: Given that \{a,b\}, \{b,c\} and \{a,c\} are frequent itemsets, \{a,b,c\} is always frequent. \\
+
+\textbf{[3 pts] Question 4f.)} \verb"True" or \verb"False" with an explanation: Given that the support of \{a,b\} is 20 and the support of \{b,c\} is 30, the support of \{b\} is larger than 20 but smaller than 30. \\
+
+\textbf{[3 pts] Question 4g.)} \verb"True" or \verb"False" with an explanation: In a dataset that has 5 items, the maximum number of size-2 frequent itemsets that can be extracted (assuming minsup $> 0$) is 20. \\
+
+\textbf{[4 pts] Question 4h.)} Draw the itemset lattice for the set of unique items $\mathcal{I} = \{ a, b, c \}$. \\
+
+\end{document}
